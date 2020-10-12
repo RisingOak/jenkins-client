@@ -137,6 +137,10 @@
    `NullPointerException` may be thrown if `upstreamUrl` is `null` when
    converting cause to `BuildCause` object.
 
+* [Fixed Issue 45284][jissue-45284]
+
+   JenkinsTriggerHelper can wait for too long if job allows concurrent builds.
+
  * [Fixed Issue 268][issue-268]
   
    NullPointerException is thrown unless isRunning() is called first.

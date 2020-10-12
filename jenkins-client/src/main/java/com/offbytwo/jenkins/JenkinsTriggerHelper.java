@@ -87,7 +87,7 @@ public class JenkinsTriggerHelper {
         JobWithDetails job = this.server.getJob(jobName);
         QueueReference queueRef = job.build(params, crumbFlag);
 
-        return triggerJobAndWaitUntilFinished(jobName, queueRef);
+        return triggerJobAndWaitUntilFinished(queueRef);
     }
 
     /**
@@ -151,11 +151,10 @@ public class JenkinsTriggerHelper {
         JobWithDetails job = this.server.getJob(jobName);
         QueueReference queueRef = job.build(crumbFlag);
 
-        return triggerJobAndWaitUntilFinished(jobName, queueRef);
+        return triggerJobAndWaitUntilFinished(queueRef);
     }
 
     /**
-     * @param jobName The name of the job.
      * @param queueRef {@link QueueReference}
      * @return In case of an cancelled job you will get
      *         {@link BuildWithDetails#getResult()}
@@ -164,14 +163,13 @@ public class JenkinsTriggerHelper {
      * @throws IOException in case of errors.
      * @throws InterruptedException In case of interrupts.
      */
-    private BuildWithDetails triggerJobAndWaitUntilFinished(String jobName, QueueReference queueRef)
+    private BuildWithDetails triggerJobAndWaitUntilFinished(QueueReference queueRef)
             throws IOException, InterruptedException {
-        JobWithDetails job = this.server.getJob(jobName);
         QueueItem queueItem = this.server.getQueueItem(queueRef);
 
-        while (!queueItem.isCancelled() && job.isInQueue()) {
+        while (!queueItem.isCancelled()
+               && (queueItem.getExecutable() == null || queueItem.getExecutable().getNumber() == null)) {
             Thread.sleep(retryInterval);
-            job = this.server.getJob(jobName);
             queueItem = this.server.getQueueItem(queueRef);
         }
 
